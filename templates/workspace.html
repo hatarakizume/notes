@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Моя доска - HF78{% endblock %}
+{% block body_class %}workspace-body{% endblock %}
+{% block page %}workspace{% endblock %}
+
+{% block content %}
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header-mobile">
+        <a href="{% url 'home' %}" class="logo">HF<span>78</span></a>
+        <button type="button" class="btn-close-sidebar" id="sidebarClose" aria-label="Закрыть меню">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <a href="{% url 'home' %}" class="logo desktop-only">HF<span>78</span></a>
+    <nav class="sidebar-menu">
+        <a href="#" class="active" data-tab="main"><span class="material-symbols-outlined">home</span>Главная</a>
+        <a href="#" data-tab="important"><span class="material-symbols-outlined">star</span>Важное</a>
+        <a href="#" data-tab="trash"><span class="material-symbols-outlined">delete</span>Корзина</a>
+    </nav>
+    <button type="button" class="btn-create-sidebar" id="createBtn">+ Создать</button>
+</aside>
+
+<main class="board-area">
+    <header class="board-header">
+        <div class="board-header-left">
+            <button type="button" class="burger-btn" id="sidebarToggle" aria-label="Открыть меню">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <div class="board-title">
+                <h2 id="boardTitle">Главная</h2>
+                <p id="lastChange">Загрузка…</p>
+            </div>
+        </div>
+        <div class="board-controls">
+            <input type="search" class="search-input" id="search" placeholder="Поиск по доске..."
+                aria-label="Поиск по доске">
+            <a href="{% url 'account' %}" style="text-decoration: none;" class="user-profile">
+                <span id="userEmail"></span>
+                <div class="avatar" id="userAvatar">?</div>
+            </a>
+        </div>
+    </header>
+    <p class="board-error" id="boardError" role="alert" hidden></p>
+    <div class="cards-grid" id="grid">
+        <button type="button" class="note-card add-card" id="addCard">
+            <span class="add-icon">+</span>
+            <span>Новая заметка</span>
+        </button>
+    </div>
+</main>
+
+<div class="modal-overlay" id="noteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card modal-card-wide">
+        <button type="button" class="modal-close" id="modalClose" aria-label="Закрыть">&times;</button>
+        <h2 class="modal-title" id="modalTitle">Новая заметка</h2>
+        <form id="noteForm" novalidate>
+            <div class="form-group">
+                <label for="noteTitle">Заголовок</label>
+                <input type="text" id="noteTitle" maxlength="200" placeholder="Например: План на месяц" required>
+            </div>
+            <div class="form-group">
+                <label for="noteText">Текст заметки</label>
+                <textarea id="noteText"
+                    placeholder="Напишите что-нибудь... Каждая строка станет пунктом списка"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="noteCategory">Категория</label>
+                <input type="text" id="noteCategory" maxlength="30" placeholder="Например: Учеба">
+            </div>
+            <div class="form-group">
+                <span class="form-label">Рисунок <small>(необязательно)</small></span>
+                <div class="draw-toolbar" role="toolbar" aria-label="Инструменты рисования">
+                    <button type="button" class="draw-tool" id="toolPen" aria-pressed="true" title="Кисть">
+                        <span class="material-symbols-outlined">brush</span>
+                    </button>
+                    <button type="button" class="draw-tool" id="toolEraser" aria-pressed="false" title="Ластик">
+                        <span class="material-symbols-outlined">ink_eraser</span>
+                    </button>
+                    <span class="draw-swatches" id="drawSwatches"></span>
+                    <label class="draw-size" title="Толщина">
+                        <span class="material-symbols-outlined">line_weight</span>
+                        <input type="range" id="toolSize" min="1" max="24" value="4" aria-label="Толщина линии">
+                    </label>
+                    <button type="button" class="draw-tool" id="toolUndo" title="Отменить">
+                        <span class="material-symbols-outlined">undo</span>
+                    </button>
+                    <button type="button" class="draw-tool" id="toolClear" title="Очистить">
+                        <span class="material-symbols-outlined">delete_sweep</span>
+                    </button>
+                </div>
+                <canvas id="drawCanvas" class="draw-canvas" width="800" height="440"
+                    aria-label="Холст для рисования"></canvas>
+            </div>
+            <p class="form-error" id="noteError" role="alert"></p>
+            <button type="submit" class="btn-primary" id="noteSave" style="width:100%">Сохранить</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

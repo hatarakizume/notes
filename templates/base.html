@@ -1,0 +1,18 @@
+{% load static %}<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HF78{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body class="{% block body_class %}{% endblock %}" data-page="{% block page %}{% endblock %}"
+    data-url-home="{% url 'home' %}" data-url-login="{% url 'login_page' %}"
+    data-url-workspace="{% url 'workspace' %}">
+    {% block content %}{% endblock %}
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+
+</html>

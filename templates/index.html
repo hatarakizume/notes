@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}HF78 - Доска для ваших мыслей{% endblock %}
+{% block page %}index{% endblock %}
+
+{% block content %}
+<header class="header">
+    <a href="{% url 'home' %}" class="logo">HF<span>78</span></a>
+    <button class="burger-menu-btn" id="burgerBtn" aria-label="Открыть меню">
+        <span class="material-symbols-outlined">menu</span>
+    </button>
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <div class="header-nav-container" id="headerNavContainer">
+        <button class="close-menu-btn" id="closeMenuBtn" aria-label="Закрыть меню">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <nav class="nav">
+            <a href="#">О продукте</a>
+            <a href="#">Контакты</a>
+        </nav>
+        <div class="auth-buttons" data-guest-only>
+            <a href="{% url 'login_page' %}" class="btn-login-text">Войти</a>
+            <a href="{% url 'register_page' %}" class="btn-register-outline">Регистрация</a>
+        </div>
+        <div class="auth-buttons" data-user-only hidden>
+            <a href="{% url 'workspace' %}" class="btn-register-outline">Моя доска</a>
+        </div>
+    </div>
+</header>
+<main class="main-content">
+    <h1 class="hero-title">Доска для ваших мыслей,<br>заметок и <span class="highlight">идей</span></h1>
+    <p class="hero-subtitle">Современное, невероятное и крайне удобное пространство<br>для ваших заметок</p>
+    <div class="action-buttons" data-guest-only>
+        <a href="{% url 'register_page' %}" class="btn-primary">Регистрация</a>
+        <a href="{% url 'login_page' %}" class="btn-secondary">Вход</a>
+    </div>
+    <div class="action-buttons" data-user-only hidden>
+        <a href="{% url 'workspace' %}" class="btn-primary">Открыть доску</a>
+    </div>
+    <div class="image-container">
+        <picture class="hero-picture">
+            <source srcset="{% static 'img/311_small.png' %}" media="(max-width: 576px)">
+            <source srcset="{% static 'img/311_medium.png' %}" media="(max-width: 992px)">
+            <img src="{% static 'img/331.png' %}" alt="Скетч доски" class="hero-image">
+        </picture>
+    </div>
+</main>
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <a href="{% url 'home' %}" class="logo">HF<span>78</span></a>
+            <p>Доска для ваших мыслей, заметок и идей</p>
+            <p class="footer-copy">&copy; {% now "Y" %} HF78</p>
+        </div>
+        <div class="footer-links">
+            <div class="footer-column">
+                <h4>Документация</h4>
+                <a href="#">Функционал</a>
+                <a href="#">Стили</a>
+            </div>
+            <div class="footer-column">
+                <h4>Контакты</h4>
+                <a href="#">Вконтакте</a>
+                <a href="#">Инстаграм</a>
+                <a href="#">Твиттер</a>
+            </div>
+            <div class="footer-column">
+                <h4>Партнеры</h4>
+                <a href="#">ДжемГлаб</a>
+                <a href="#">Книга</a>
+                <a href="#">Макет</a>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}

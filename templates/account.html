@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Аккаунт - HF78{% endblock %}
+{% block page %}account{% endblock %}
+
+{% block content %}
+    <header class="header">
+        <a href="{% url 'home' %}" class="logo">HF<span>78</span></a>
+        <div class="auth-buttons">
+            <a href="{% url 'workspace' %}" class="btn-register-outline">Вернуться на доску</a>
+        </div>
+    </header>
+    <div class="auth-wrapper">
+        <div class="account-card">
+            <div class="account-avatar-large" id="avatarLarge">?</div>
+            <h2 style="font-family: 'Lora', serif; font-size: 32px; margin-bottom: 32px;">Настройки профиля</h2>
+            <form id="profileForm" novalidate>
+                <div class="form-group">
+                    <label for="accName">Имя пользователя</label>
+                    <input type="text" id="accName" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="accEmail">Электронная почта</label>
+                    <input type="email" id="accEmail" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="accPhone">Телефон</label>
+                    <input type="tel" id="accPhone" maxlength="20" autocomplete="tel" placeholder="+7 999 123-45-67">
+                </div>
+                <div class="form-group">
+                    <label for="accAvatar">Аватар (JPEG или PNG, до 2 МБ)</label>
+                    <input type="file" id="accAvatar" accept="image/png,image/jpeg">
+                </div>
+                <p class="form-error" id="profileError" role="alert"></p>
+                <p class="form-success" id="profileOk" role="status"></p>
+                <div class="account-actions">
+                    <button type="submit" class="btn-primary">Сохранить изменения</button>
+                </div>
+            </form>
+
+            <form id="passwordForm" class="account-section" novalidate>
+                <h3>Смена пароля</h3>
+                <div class="form-group">
+                    <label for="oldPassword">Текущий пароль</label>
+                    <input type="password" id="oldPassword" autocomplete="current-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Новый пароль</label>
+                    <input type="password" id="newPassword" autocomplete="new-password" required>
+                </div>
+                <p class="form-error" id="passwordError" role="alert"></p>
+                <p class="form-success" id="passwordOk" role="status"></p>
+                <div class="account-actions">
+                    <button type="submit" class="btn-secondary">Сменить пароль</button>
+                    <button type="button" class="btn-danger" id="logoutBtn">Выйти из аккаунта</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

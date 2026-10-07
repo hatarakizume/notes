@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация - HF78{% endblock %}
+{% block page %}register{% endblock %}
+
+{% block content %}
+    <header class="header">
+        <a href="{% url 'home' %}" class="logo">HF<span>78</span></a>
+        <div class="auth-buttons">
+            <a href="{% url 'login_page' %}" class="btn-login-text">Войти</a>
+        </div>
+    </header>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <h2>Новый аккаунт</h2>
+            <form id="registerForm" novalidate>
+                <div class="form-group">
+                    <label for="name">Имя пользователя</label>
+                    <input type="text" id="name" autocomplete="username" maxlength="150" required>
+                    <small class="form-hint">Латиница или кириллица, цифры и символы @ . + - _</small>
+                </div>
+                <div class="form-group">
+                    <label for="email">Электронная почта</label>
+                    <input type="email" id="email" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" autocomplete="new-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="password2">Повторите пароль</label>
+                    <input type="password" id="password2" autocomplete="new-password" required>
+                </div>
+                <p class="form-error" id="formError" role="alert"></p>
+                <button type="submit" class="btn-primary" style="width: 100%;">Зарегистрироваться</button>
+            </form>
+            <div class="auth-links">
+                Уже есть аккаунт? <a href="{% url 'login_page' %}">Войти</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

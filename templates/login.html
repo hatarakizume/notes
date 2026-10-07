@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Вход - HF78{% endblock %}
+{% block page %}login{% endblock %}
+
+{% block content %}
+    <header class="header">
+        <a href="{% url 'home' %}" class="logo">HF<span>78</span></a>
+        <div class="auth-buttons">
+            <a href="{% url 'register_page' %}" class="btn-register-outline">Регистрация</a>
+        </div>
+    </header>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <h2>С возвращением</h2>
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="login">Электронная почта или имя пользователя</label>
+                    <input type="text" id="login" autocomplete="username" maxlength="254" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" autocomplete="current-password" required>
+                </div>
+                <p class="form-error" id="formError" role="alert"></p>
+                <button type="submit" class="btn-primary" style="width: 100%;">Войти</button>
+            </form>
+            <div class="auth-links">
+                Нет аккаунта? <a href="{% url 'register_page' %}">Создать сейчас</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

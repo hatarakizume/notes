@@ -2,8 +2,10 @@ from collections.abc import Mapping
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
+from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
@@ -15,7 +17,10 @@ from .avatars import process_avatar
 from .models import User, UserProfile
 
 PASSWORD_MAX_LENGTH = 256
-EMAIL_TAKEN_MESSAGE = "Не удалось завершить регистрацию. Проверьте введённые данные или восстановите доступ."
+REGISTRATION_FAILED_MESSAGE = (
+    "Не удалось завершить регистрацию. Проверьте введённые данные "
+    "или восстановите доступ."
+)
 
 
 class StrictInputMixin:
@@ -69,20 +74,24 @@ class UserRegistrationSerializer(StrictInputMixin, serializers.ModelSerializer):
         model = User
         fields = ("username", "email", "password", "password_confirm")
         extra_kwargs = {
-            "email": {"required": True, "allow_blank": False},
+            "username": {"validators": [UnicodeUsernameValidator()]},
+            "email": {"required": True, "allow_blank": False, "validators": []},
         }
 
     def validate_email(self, value):
-        value = User.objects.normalize_email(value)
-        if User.objects.filter(email__iexact=value).exists():
-            raise serializers.ValidationError(EMAIL_TAKEN_MESSAGE)
-        return value
+        return User.objects.normalize_email(value)
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password_confirm"]:
             raise serializers.ValidationError({"password": "Пароли не совпадают."})
         candidate = User(username=attrs["username"], email=attrs["email"])
         check_password_strength(attrs["password"], candidate, field="password")
+        if User.objects.filter(
+            Q(username=attrs["username"]) | Q(email__iexact=attrs["email"])
+        ).exists():
+            raise serializers.ValidationError(
+                {"non_field_errors": [REGISTRATION_FAILED_MESSAGE]}
+            )
         return attrs
 
     def create(self, validated_data):
@@ -96,7 +105,7 @@ class UserRegistrationSerializer(StrictInputMixin, serializers.ModelSerializer):
                 )
         except IntegrityError:
             raise serializers.ValidationError(
-                {"non_field_errors": ["Не удалось завершить регистрацию. Проверьте введённые данные или воспользуйтесь восстановлением доступа.."]}
+                {"non_field_errors": [REGISTRATION_FAILED_MESSAGE]}
             )
 
 
@@ -165,7 +174,7 @@ class UserProfileSerializer(StrictInputMixin, serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ("username", "email", "avatar", "created_at", "updated_at")
+        fields = ("username", "email", "avatar", "phone", "created_at", "updated_at")
         read_only_fields = ("created_at", "updated_at")
 
     def validate_avatar(self, file):

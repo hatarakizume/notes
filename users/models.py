@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.functions import Lower
 
@@ -27,6 +28,18 @@ class UserProfile(models.Model):
         validators=[validate_avatar_file],
         null=True,
         blank=True,
+    )
+    phone = models.CharField(
+        "Телефон",
+        max_length=20,
+        blank=True,
+        default="",
+        validators=[
+            RegexValidator(
+                r"^\+?[0-9][0-9 ()\-]{4,18}$",
+                "Телефон может содержать только цифры, пробелы, скобки, дефис и + в начале.",
+            )
+        ],
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

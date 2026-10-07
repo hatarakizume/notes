@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -12,6 +13,7 @@ from .serializers import NoteSerializer
 class NoteViewSet(viewsets.ModelViewSet):
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser]
     lookup_value_regex = r"\d+"
 
     def get_queryset(self):

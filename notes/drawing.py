@@ -27,7 +27,7 @@ def validate_drawing(value):
     if not value.startswith(DRAWING_PREFIX):
         raise DrawingError("Рисунок должен быть PNG в формате data URL")
 
-    payload = value[len(DRAWING_PREFIX):]
+    payload = value[len(DRAWING_PREFIX) :]
     if not payload or len(payload) % 4 or not _BASE64_RE.match(payload):
         raise DrawingError("Некорректные данные base64 в рисунке")
     try:

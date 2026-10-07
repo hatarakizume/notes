@@ -17,14 +17,17 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.shortcuts import render
 from django.urls import include, path
-
-def home(request):
-    return render(request, "index.html")
+from django.views.generic import TemplateView
 
 urlpatterns = [
-    path("", home),
+    # Страницы сайта. Данные на них загружает JS через API (JWT), поэтому
+    # сами шаблоны не содержат пользовательских данных.
+    path("", TemplateView.as_view(template_name="index.html"), name="home"),
+    path("login/", TemplateView.as_view(template_name="login.html"), name="login_page"),
+    path("register/", TemplateView.as_view(template_name="register.html"), name="register_page"),
+    path("workspace/", TemplateView.as_view(template_name="workspace.html"), name="workspace"),
+    path("account/", TemplateView.as_view(template_name="account.html"), name="account"),
     path("admin/", admin.site.urls),
     path("api/auth/", include("users.urls")),
     path("api/", include("notes.urls")),

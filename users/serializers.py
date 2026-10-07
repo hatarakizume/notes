@@ -110,7 +110,8 @@ class UserRegistrationSerializer(StrictInputMixin, serializers.ModelSerializer):
 
 
 class UserLoginSerializer(StrictInputMixin, serializers.Serializer):
-    username = serializers.CharField(max_length=150)
+    # Логин или email (форма входа на сайте спрашивает email).
+    username = serializers.CharField(max_length=254)
     password = password_field()
 
     def validate(self, attrs):
@@ -118,16 +119,24 @@ class UserLoginSerializer(StrictInputMixin, serializers.Serializer):
         password = attrs.get("password")
 
         if not username or not password:
-            raise serializers.ValidationError("Необходимо указать username и пароль.")
+            raise serializers.ValidationError("Необходимо указать логин и пароль.")
 
+        login = username
+        if "@" in login and not User.objects.filter(username=login).exists():
+            match = User.objects.filter(email__iexact=login).only("username").first()
+            if match is not None:
+                login = match.username
+
+        # authenticate вызывается ровно один раз в любом случае, ответ при
+        # ошибке одинаковый: не раскрываем, существует ли логин или email.
         user = authenticate(
             request=self.context.get("request"),
-            username=username,
+            username=login,
             password=password,
         )
 
         if not user or not user.is_active:
-            raise serializers.ValidationError("Неверный username или пароль.")
+            raise serializers.ValidationError("Неверный логин или пароль.")
 
         attrs["user"] = user
         return attrs
@@ -204,4 +213,3 @@ class ChangePasswordSerializer(StrictInputMixin, serializers.Serializer):
         user.set_password(self.validated_data["new_password"])
         user.save(update_fields=["password"])
         return user
-

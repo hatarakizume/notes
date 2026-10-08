@@ -110,7 +110,6 @@ class UserRegistrationSerializer(StrictInputMixin, serializers.ModelSerializer):
 
 
 class UserLoginSerializer(StrictInputMixin, serializers.Serializer):
-    # Логин или email (форма входа на сайте спрашивает email).
     username = serializers.CharField(max_length=254)
     password = password_field()
 
@@ -127,8 +126,6 @@ class UserLoginSerializer(StrictInputMixin, serializers.Serializer):
             if match is not None:
                 login = match.username
 
-        # authenticate вызывается ровно один раз в любом случае, ответ при
-        # ошибке одинаковый: не раскрываем, существует ли логин или email.
         user = authenticate(
             request=self.context.get("request"),
             username=login,

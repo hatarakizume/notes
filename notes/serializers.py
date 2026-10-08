@@ -45,8 +45,6 @@ class NoteSerializer(StrictInputMixin, serializers.ModelSerializer):
         )
 
     def to_internal_value(self, data):
-        # Для флага принимаем только настоящий JSON-boolean: без неявного
-        # превращения "yes", 1 или "true" в True.
         if isinstance(data, dict) and "is_important" in data:
             if not isinstance(data["is_important"], bool):
                 raise serializers.ValidationError(

@@ -21,12 +21,10 @@ NEW_STRONG_PASSWORD = "Rt*yu!Io9-kL_77vbn"
 
 TEMP_MEDIA = tempfile.mkdtemp(prefix="test-media-")
 
-
 def image_bytes(fmt="PNG", size=(32, 32), mode="RGB", color=(200, 10, 10), **save_kwargs):
     buf = io.BytesIO()
     Image.new(mode, size, color).save(buf, format=fmt, **save_kwargs)
     return buf.getvalue()
-
 
 def upload(name, content, content_type="image/png"):
     return SimpleUploadedFile(name, content, content_type=content_type)
@@ -39,15 +37,12 @@ def media_files():
             result.append(os.path.relpath(os.path.join(root, f), TEMP_MEDIA))
     return sorted(result)
 
-
 def get_secure_url(name, **kwargs):
     """Гарантирует генерацию URL с закрывающим слэшем."""
     url = reverse(name, kwargs=kwargs)
     if not url.endswith("/"):
         url += "/"
     return url
-
-
 class BaseAPITest(APITestCase):
     def setUp(self):
         cache.clear()
@@ -64,12 +59,6 @@ class BaseAPITest(APITestCase):
 
     def auth(self, access):
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access}")
-
-# --------------------------------------------------------------------------
-# Регистрация
-# --------------------------------------------------------------------------
-
-
 class RegistrationTests(BaseAPITest):
     @property
     def url(self):
@@ -207,12 +196,6 @@ class RegistrationTests(BaseAPITest):
         for name in ["<script>alert(1)</script>", "x' OR '1'='1", "a\"; DROP TABLE user;--"]:
             with self.subTest(name=name):
                 self.assert_rejected(self.payload(username=name), "username")
-
-# --------------------------------------------------------------------------
-# Вход, выход, обновление токена
-# --------------------------------------------------------------------------
-
-
 class AuthenticationTests(BaseAPITest):
     def test_login_success_and_invalid_credentials(self):
         """Проверка генерации JWT при верных данных и блокировки при неверных."""
@@ -261,13 +244,6 @@ class AuthenticationTests(BaseAPITest):
             get_secure_url("token_refresh"), {"refresh": tokens["refresh"]}, format="json", secure=True
         )
         self.assertEqual(resp.status_code, 401, resp.content)
-
-
-# --------------------------------------------------------------------------
-# Профиль пользователя (MeView)
-# --------------------------------------------------------------------------
-
-
 @override_settings(MEDIA_ROOT=TEMP_MEDIA)
 class ProfileTests(BaseAPITest):
     @classmethod
@@ -294,13 +270,6 @@ class ProfileTests(BaseAPITest):
         resp = self.client.put(get_secure_url("me"), {"avatar": avatar_file}, format="multipart", secure=True)
         self.assertEqual(resp.status_code, 200, resp.content)
         self.assertIsNotNone(resp.json()["avatar"])
-
-
-# --------------------------------------------------------------------------
-# Смена пароля
-# --------------------------------------------------------------------------
-
-
 class ChangePasswordTests(BaseAPITest):
     def test_change_password_revokes_all_active_refresh_tokens(self):
         """Проверка принудительного отзыва всех прошлых токенов пользователя."""

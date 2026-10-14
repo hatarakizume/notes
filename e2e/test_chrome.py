@@ -13,7 +13,6 @@ def chrome_driver():
     chrome_options.add_argument("--start-maximized")
     chrome_options.add_argument("--disable-extensions")
     
-    # Ключевые настройки для обхода ошибок net:: и SSL-сертификатов
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_argument("--allow-insecure-localhost")
     chrome_options.add_argument("--disable-gpu")
@@ -26,8 +25,6 @@ def chrome_driver():
     
     yield driver
     driver.quit()
-
-
 @pytest.mark.django_db(transaction=True)
 class TestGoogleChromeFrontend:
 

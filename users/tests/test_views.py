@@ -38,7 +38,6 @@ def media_files():
     return sorted(result)
 
 def get_secure_url(name, **kwargs):
-    """Гарантирует генерацию URL с закрывающим слэшем."""
     url = reverse(name, kwargs=kwargs)
     if not url.endswith("/"):
         url += "/"
@@ -77,7 +76,6 @@ class RegistrationTests(BaseAPITest):
     def assert_rejected(self, data, field=None, fmt="json"):
         cache.clear()
         before = User.objects.count()
-        # ИСПРАВЛЕНО: добавлено принудительное использование secure=True
         resp = self.client.post(self.url, data, format=fmt, secure=True)
         self.assertEqual(resp.status_code, 400, resp.content)
         if field:
@@ -180,7 +178,6 @@ class RegistrationTests(BaseAPITest):
         self.assertEqual(User.objects.count(), 0)
 
     def test_duplicate_username_and_email_give_identical_response(self):
-        """Ответ не должен выдавать, какое именно значение уже занято."""
         self.create_user(username="taken", email="Taken@Example.com")
         dup_email = self.assert_rejected(self.payload(email="taken@example.com"))
         dup_username = self.assert_rejected(self.payload(username="taken"))
@@ -198,7 +195,6 @@ class RegistrationTests(BaseAPITest):
                 self.assert_rejected(self.payload(username=name), "username")
 class AuthenticationTests(BaseAPITest):
     def test_login_success_and_invalid_credentials(self):
-        """Проверка генерации JWT при верных данных и блокировки при неверных."""
         self.create_user(username="loginuser", password=STRONG_PASSWORD)
 
         resp = self.client.post(
@@ -221,7 +217,6 @@ class AuthenticationTests(BaseAPITest):
         self.assertEqual(resp.status_code, 400, resp.content)
 
     def test_login_unknown_fields_rejected_by_mixin(self):
-        """StrictInputMixin должен отклонять запросы на вход с левыми полями."""
         resp = self.client.post(
             get_secure_url("login"),
             {"username": "user", "password": STRONG_PASSWORD, "extra_hack_field": "danger"},
@@ -232,7 +227,6 @@ class AuthenticationTests(BaseAPITest):
         self.assertIn("extra_hack_field", resp.json())
 
     def test_logout_and_token_blacklist(self):
-        """Проверка занесения refresh-токена в блэклист при логауте."""
         user = self.create_user(username="logoutuser")
         tokens = self.login(username="logoutuser")
 
@@ -254,7 +248,6 @@ class ProfileTests(BaseAPITest):
 
     @mock.patch("users.serializers.process_avatar")
     def test_profile_retrieve_and_update_avatar_handling(self, mock_process_avatar):
-        """Тест GET и PUT запросов к профилю с изоляцией дисковых операций."""
         mock_process_avatar.side_effect = lambda file: file
         user = self.create_user(username="avataruser")
         tokens = self.login(username="avataruser")
@@ -272,7 +265,6 @@ class ProfileTests(BaseAPITest):
         self.assertIsNotNone(resp.json()["avatar"])
 class ChangePasswordTests(BaseAPITest):
     def test_change_password_revokes_all_active_refresh_tokens(self):
-        """Проверка принудительного отзыва всех прошлых токенов пользователя."""
         user = self.create_user(username="changepwd")
         tokens = self.login(username="changepwd")
         self.auth(tokens["access"])
